@@ -507,8 +507,9 @@
 
 			<!-- national/international cycle routes on secondary/primary roads (e.g. Swiss
 			     national routes): the route planners chose these roads, so they get a minimum
-			     priority, except where the speed limit is 60 or more. Not for tertiary roads
-			     or regional/local routes (knooppunten): in NL that would pull routes off
+			     priority, except where the speed limit is 60 or more. Regional routes only
+			     where the speed limit is 50 or less (through villages). Not for tertiary
+			     roads or local routes (knooppunten): in NL that would pull routes off
 			     fietspaden onto LF dike roads. -->
 			<if t="route_bicycle"><if t="network" v="icn"><ifnot t="maxspeed" v="60"><ifnot t="maxspeed" v="70"><ifnot t="maxspeed" v="80"><ifnot t="maxspeed" v="90"><ifnot t="maxspeed" v="100">
 				<select value="0.6" t="highway" v="secondary"/>
@@ -522,6 +523,31 @@
 				<select value="0.5" t="highway" v="primary"/>
 				<select value="0.5" t="highway" v="primary_link"/>
 			</ifnot></ifnot></ifnot></ifnot></ifnot></if></if>
+
+			<if t="route_bicycle"><if t="network" v="rcn"><if t="maxspeed" v="20">
+				<select value="0.6" t="highway" v="secondary"/>
+				<select value="0.6" t="highway" v="secondary_link"/>
+				<select value="0.5" t="highway" v="primary"/>
+				<select value="0.5" t="highway" v="primary_link"/>
+			</if></if></if>
+			<if t="route_bicycle"><if t="network" v="rcn"><if t="maxspeed" v="30">
+				<select value="0.6" t="highway" v="secondary"/>
+				<select value="0.6" t="highway" v="secondary_link"/>
+				<select value="0.5" t="highway" v="primary"/>
+				<select value="0.5" t="highway" v="primary_link"/>
+			</if></if></if>
+			<if t="route_bicycle"><if t="network" v="rcn"><if t="maxspeed" v="40">
+				<select value="0.6" t="highway" v="secondary"/>
+				<select value="0.6" t="highway" v="secondary_link"/>
+				<select value="0.5" t="highway" v="primary"/>
+				<select value="0.5" t="highway" v="primary_link"/>
+			</if></if></if>
+			<if t="route_bicycle"><if t="network" v="rcn"><if t="maxspeed" v="50">
+				<select value="0.6" t="highway" v="secondary"/>
+				<select value="0.6" t="highway" v="secondary_link"/>
+				<select value="0.5" t="highway" v="primary"/>
+				<select value="0.5" t="highway" v="primary_link"/>
+			</if></if></if>
 
 			<!-- a lane on one side only gets half the gain of lanes on both sides. OsmAnd
 			     turns cycleway:left/right=lane into cycleway=lane, so one side is recognised

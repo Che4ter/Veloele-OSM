@@ -44,7 +44,8 @@ then import the new bundle.
   cycle routes; avoids main roads without a cycle facility.
 - National and international cycle routes keep a minimum priority even on
   main roads (secondary 0.6, primary 0.5), because often there is no
-  alternative.
+  alternative. Regional routes too, but only where the speed limit is
+  50 km/h or less, e.g. through villages.
 - Avoids footpaths and staircases: 10 m of steps cost about a 2.8 km detour.
 - Cobblestones cost about 3×, sett about 2× as much as asphalt; compacted
   gravel and good tracks count as 15 km/h.

@@ -298,18 +298,22 @@ assign surface_factor = if surface=cobblestone then 0.6   # BRouter has no unhew
 # national/international cycle routes: the route planners already chose these
 # roads for cycling, so trust them more than the road class suggests (matters
 # where routes run on main roads, e.g. Swiss national routes). Minimum
-# priority by road class, and only half of the traffic penalty. Not for
-# regional/local routes (knooppunten): in NL that pulls routes off fietspaden.
+# priority by road class, and only half of the traffic penalty. Regional
+# routes only on secondary/primary roads with a speed limit of 50 or less
+# (through villages); elsewhere regional/local routes (knooppunten) would pull
+# routes off fietspaden in NL, or onto 80 km/h roads.
 assign national_route = or route_bicycle_icn=yes route_bicycle_ncn=yes
+assign floor_route = or national_route
+       and route_bicycle_rcn=yes and highway=primary|primary_link|secondary|secondary_link maxspeed=20|30|40|50
 assign route_floor =
-       if not national_route                    then 0
+       if not floor_route                       then 0
        else if highway=steps|trunk|trunk_link   then 0
        else if highway=primary|primary_link     then route_floor_primary
        else if highway=secondary|secondary_link then route_floor_secondary
        else if highway=tertiary|tertiary_link   then route_floor_tertiary
        else route_floor_minor
 assign route_priority    = max priority route_floor
-assign route_road_factor = if national_route then add sub 1 route_traffic_share multiply route_traffic_share road_factor else road_factor
+assign route_road_factor = if floor_route then add sub 1 route_traffic_share multiply route_traffic_share road_factor else road_factor
 
 # ---------------------------------------------------------------------------
 # oneways (from the stock trekking profile): against the direction you may

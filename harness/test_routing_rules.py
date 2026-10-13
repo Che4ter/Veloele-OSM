@@ -122,5 +122,32 @@ class OneSidedLaneTest(unittest.TestCase):
             self.assertEqual(_highway_value_nested(prio, highway, 'cycleway:right:lane'), self.HALF[highway])
 
 
+class RegionalRouteFloorTest(unittest.TestCase):
+    """Regional routes keep the national-route floor on secondary/primary roads, but only
+    where the speed limit is known and 50 or less (through villages)."""
+
+    def test_brouter_regional_floor(self):
+        brf = (ROOT / 'profile/veloele.brf').read_text(encoding='utf-8')
+        self.assertRegex(brf, r'assign floor_route = or national_route\s+and route_bicycle_rcn=yes '
+                              r'and highway=primary\|primary_link\|secondary\|secondary_link maxspeed=20\|30\|40\|50\n')
+        self.assertIn('if not floor_route ', brf)
+        self.assertIn('assign route_road_factor = if floor_route then', brf)
+
+    def test_osmand_regional_floor(self):
+        prio = _osmand_priority()
+        speeds = set()
+        for route in prio.findall('if[@t="route_bicycle"]'):
+            net = route.find('if[@t="network"][@v="rcn"]')
+            if net is None:
+                continue
+            for limit in net:
+                self.assertEqual((limit.tag, limit.get('t')), ('if', 'maxspeed'))
+                speeds.add(limit.get('v'))
+                vals = {sel.get('v'): sel.get('value') for sel in limit.findall('select')}
+                self.assertEqual(vals, {'secondary': '0.6', 'secondary_link': '0.6',
+                                        'primary': '0.5', 'primary_link': '0.5'})
+        self.assertEqual(speeds, {'20', '30', '40', '50'})
+
+
 if __name__ == '__main__':
     unittest.main()
