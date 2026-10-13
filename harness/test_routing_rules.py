@@ -15,6 +15,20 @@ def _guarded_by_track(node, inside_track=False, inside_param=False):
         yield from _guarded_by_track(child, track, param)
 
 
+def _osmand_priority():
+    return ET.parse(ROOT / 'profile/veloele.xml').find('.//way[@attribute="priority"]')
+
+
+def _highway_value(prio, highway, tag, value):
+    """Value of the select for tag=value directly inside a highway=<highway> block."""
+    for block in prio.iter('if'):
+        if block.get('t') == 'highway' and block.get('v') == highway:
+            sel = block.find(f'select[@t="{tag}"][@v="{value}"]')
+            if sel is not None:
+                return sel.get('value')
+    return None
+
+
 class GoodTrackSpeedTest(unittest.TestCase):
     """grade1/2 = 15 km/h is for tracks; an asphalt road that also carries tracktype keeps 18."""
 
@@ -43,6 +57,27 @@ class SidewalkBicycleTest(unittest.TestCase):
         self.assertIn('assign priority = if sidewalk_bike then max priority 0.75 else priority', brf)
         facility = re.search(r'assign has_bike_facility = (.*?)\n\n', brf, re.S).group(1)
         self.assertIn('sidewalk_bike', facility)
+
+
+
+class SharedLaneTest(unittest.TestCase):
+    """Sharrows and bus lanes open to bikes count on any side, not only as plain cycleway=."""
+
+    def test_brouter_shared_lane_any_side(self):
+        brf = (ROOT / 'profile/veloele.brf').read_text(encoding='utf-8')
+        for value in ('shared_lane', 'share_busway'):
+            block = brf.split(f'assign has_{value} =', 1)[1].split('\nassign ', 1)[0]
+            for key in ('cycleway', 'cycleway:both', 'cycleway:left', 'cycleway:right'):
+                self.assertIn(f' {key}={value}', block)
+        self.assertNotIn('cycleway=shared_lane then', brf)
+        self.assertNotIn('cycleway=shared_lane|share_busway then', brf)
+
+    def test_osmand_shared_lane_both(self):
+        # one-sided values reach the OsmAnd router as plain cycleway=, cycleway:both= stays
+        prio = _osmand_priority()
+        self.assertEqual(_highway_value(prio, 'unclassified', 'cycleway:both', 'shared_lane'), '0.8')
+        for value in ('shared_lane', 'share_busway'):
+            self.assertEqual(_highway_value(prio, 'tertiary', 'cycleway:both', value), '0.6')
 
 
 if __name__ == '__main__':

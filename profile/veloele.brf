@@ -150,6 +150,13 @@ assign mv_restricted = and not highway=footway|pedestrian|path|steps
                            motor_vehicle=agricultural|destination|private
 
 assign has_lane = or cycleway=lane cycleway:both=lane
+# shared lane markings (sharrows) or a bus lane open to bikes, on any side
+assign has_shared_lane = or cycleway=shared_lane
+                         or cycleway:both=shared_lane
+                         or cycleway:left=shared_lane cycleway:right=shared_lane
+assign has_share_busway = or cycleway=share_busway
+                          or cycleway:both=share_busway
+                          or cycleway:left=share_busway cycleway:right=share_busway
 
 assign priority =
        if      bicycle=private                    then 0.1
@@ -203,7 +210,7 @@ assign priority =
        # C: quiet streets and minor roads
        else if highway=living_street              then 0.85
        else if highway=residential                then ( if has_lane then 0.82 else 0.8 )
-       else if highway=unclassified               then ( if or has_lane cycleway=shared_lane then 0.8 else 0.75 )
+       else if highway=unclassified               then ( if or has_lane has_shared_lane then 0.8 else 0.75 )
        else if and bicycle=yes|permissive highway=path       then 0.85
        else if and bicycle=yes|permissive highway=footway    then 0.8
        else if and bicycle=yes|permissive highway=pedestrian then 0.6
@@ -226,7 +233,7 @@ assign priority =
        else if highway=tertiary then
        (
          if has_lane then 0.65
-         else if cycleway=shared_lane|share_busway then 0.6
+         else if or has_shared_lane has_share_busway then 0.6
          else 0.5
        )
        else if highway=tertiary_link  then ( if has_lane then 0.65 else 0.5 )

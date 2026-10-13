@@ -452,7 +452,9 @@
 			<if t="highway" v="unclassified">
 				<select value="0.8" t="cycleway" v="lane"/>
 				<select value="0.8" t="cycleway:both" v="lane"/>
+				<!-- one-sided shared lanes reach the router as cycleway=shared_lane -->
 				<select value="0.8" t="cycleway" v="shared_lane"/>
+				<select value="0.8" t="cycleway:both" v="shared_lane"/>
 				<select value="0.75"/>
 			</if>
 			<if t="bicycle" v="yes">
@@ -515,6 +517,8 @@
 				<select value="0.65" t="cycleway:both" v="lane"/>
 				<select value="0.6" t="cycleway" v="shared_lane"/>
 				<select value="0.6" t="cycleway" v="share_busway"/>
+				<select value="0.6" t="cycleway:both" v="shared_lane"/>
+				<select value="0.6" t="cycleway:both" v="share_busway"/>
 				<select value="0.5"/>
 			</if>
 			<if t="highway" v="tertiary_link">
