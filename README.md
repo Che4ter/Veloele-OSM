@@ -1,7 +1,8 @@
-# Velöle – OsmAnd for bicycle touring and travel
+# Velöle – OsmAnd and BRouter profile for bicycle touring and travel
 
-Velöle is a ready-made OsmAnd setup for touring and travelling by bike. One
-bundle file, `veloele.osf`, adds an app profile **Velöle** with:
+Velöle is a ready-made OsmAnd and BRouter setup for touring and travelling
+by bike. For OsmAnd, one bundle file, `veloele.osf`, adds an app profile
+**Velöle** with:
 
 - **Routing** tuned for loaded touring bikes (see below).
 - **Navigation** settings for riding: the route line shows the elevation
