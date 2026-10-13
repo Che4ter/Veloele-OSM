@@ -149,7 +149,9 @@ assign speed =
 assign mv_restricted = and not highway=footway|pedestrian|path|steps
                            motor_vehicle=agricultural|destination|private
 
-assign has_lane = or cycleway=lane cycleway:both=lane
+# a lane on both sides, or on one side only (half the gain)
+assign has_lane = or cycleway=lane or cycleway:both=lane and cycleway:left=lane cycleway:right=lane
+assign one_lane = and not has_lane or cycleway:left=lane cycleway:right=lane
 # shared lane markings (sharrows) or a bus lane open to bikes, on any side
 assign has_shared_lane = or cycleway=shared_lane
                          or cycleway:both=shared_lane
@@ -209,8 +211,8 @@ assign priority =
 
        # C: quiet streets and minor roads
        else if highway=living_street              then 0.85
-       else if highway=residential                then ( if has_lane then 0.82 else 0.8 )
-       else if highway=unclassified               then ( if or has_lane has_shared_lane then 0.8 else 0.75 )
+       else if highway=residential                then ( if has_lane then 0.82 else if one_lane then 0.81 else 0.8 )
+       else if highway=unclassified               then ( if or has_lane has_shared_lane then 0.8 else if one_lane then 0.775 else 0.75 )
        else if and bicycle=yes|permissive highway=path       then 0.85
        else if and bicycle=yes|permissive highway=footway    then 0.8
        else if and bicycle=yes|permissive highway=pedestrian then 0.6
@@ -233,12 +235,13 @@ assign priority =
        else if highway=tertiary then
        (
          if has_lane then 0.65
+         else if one_lane then 0.575
          else if or has_shared_lane has_share_busway then 0.6
          else 0.5
        )
-       else if highway=tertiary_link  then ( if has_lane then 0.65 else 0.5 )
-       else if highway=secondary|secondary_link then ( if has_lane then 0.55 else 0.35 )
-       else if highway=primary|primary_link     then ( if has_lane then 0.45 else 0.25 )
+       else if highway=tertiary_link  then ( if has_lane then 0.65 else if one_lane then 0.575 else 0.5 )
+       else if highway=secondary|secondary_link then ( if has_lane then 0.55 else if one_lane then 0.45 else 0.35 )
+       else if highway=primary|primary_link     then ( if has_lane then 0.45 else if one_lane then 0.35 else 0.25 )
        else if highway=trunk|trunk_link         then 0.15
        else if highway=road                     then 0.6
 

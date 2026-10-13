@@ -445,13 +445,25 @@
 			<!-- C: quiet streets and minor roads -->
 			<select value="0.85" t="highway" v="living_street"/>
 			<if t="highway" v="residential">
-				<select value="0.82" t="cycleway" v="lane"/>
 				<select value="0.82" t="cycleway:both" v="lane"/>
+				<if t="cycleway" v="lane">
+					<select value="0.81" t="cycleway:left" v="no"/>
+					<select value="0.81" t="cycleway:right" v="no"/>
+					<if t="cycleway:right:lane"><ifnot t="cycleway:left:lane"><select value="0.81"/></ifnot></if>
+					<if t="cycleway:left:lane"><ifnot t="cycleway:right:lane"><select value="0.81"/></ifnot></if>
+				</if>
+				<select value="0.82" t="cycleway" v="lane"/>
 				<select value="0.8"/>
 			</if>
 			<if t="highway" v="unclassified">
-				<select value="0.8" t="cycleway" v="lane"/>
 				<select value="0.8" t="cycleway:both" v="lane"/>
+				<if t="cycleway" v="lane">
+					<select value="0.775" t="cycleway:left" v="no"/>
+					<select value="0.775" t="cycleway:right" v="no"/>
+					<if t="cycleway:right:lane"><ifnot t="cycleway:left:lane"><select value="0.775"/></ifnot></if>
+					<if t="cycleway:left:lane"><ifnot t="cycleway:right:lane"><select value="0.775"/></ifnot></if>
+				</if>
+				<select value="0.8" t="cycleway" v="lane"/>
 				<!-- one-sided shared lanes reach the router as cycleway=shared_lane -->
 				<select value="0.8" t="cycleway" v="shared_lane"/>
 				<select value="0.8" t="cycleway:both" v="shared_lane"/>
@@ -510,6 +522,45 @@
 				<select value="0.5" t="highway" v="primary"/>
 				<select value="0.5" t="highway" v="primary_link"/>
 			</ifnot></ifnot></ifnot></ifnot></ifnot></if></if>
+
+			<!-- a lane on one side only gets half the gain of lanes on both sides. OsmAnd
+			     turns cycleway:left/right=lane into cycleway=lane, so one side is recognised
+			     by cycleway:<other side>=no or by lane details (cycleway:<side>:lane) on one
+			     side only; residential and unclassified roads do the same in their blocks -->
+			<if t="cycleway" v="lane"><ifnot t="cycleway:both" v="lane">
+				<if t="cycleway:left" v="no">
+					<select value="0.575" t="highway" v="tertiary"/>
+					<select value="0.575" t="highway" v="tertiary_link"/>
+					<select value="0.45" t="highway" v="secondary"/>
+					<select value="0.45" t="highway" v="secondary_link"/>
+					<select value="0.35" t="highway" v="primary"/>
+					<select value="0.35" t="highway" v="primary_link"/>
+				</if>
+				<if t="cycleway:right" v="no">
+					<select value="0.575" t="highway" v="tertiary"/>
+					<select value="0.575" t="highway" v="tertiary_link"/>
+					<select value="0.45" t="highway" v="secondary"/>
+					<select value="0.45" t="highway" v="secondary_link"/>
+					<select value="0.35" t="highway" v="primary"/>
+					<select value="0.35" t="highway" v="primary_link"/>
+				</if>
+				<if t="cycleway:right:lane"><ifnot t="cycleway:left:lane">
+					<select value="0.575" t="highway" v="tertiary"/>
+					<select value="0.575" t="highway" v="tertiary_link"/>
+					<select value="0.45" t="highway" v="secondary"/>
+					<select value="0.45" t="highway" v="secondary_link"/>
+					<select value="0.35" t="highway" v="primary"/>
+					<select value="0.35" t="highway" v="primary_link"/>
+				</ifnot></if>
+				<if t="cycleway:left:lane"><ifnot t="cycleway:right:lane">
+					<select value="0.575" t="highway" v="tertiary"/>
+					<select value="0.575" t="highway" v="tertiary_link"/>
+					<select value="0.45" t="highway" v="secondary"/>
+					<select value="0.45" t="highway" v="secondary_link"/>
+					<select value="0.35" t="highway" v="primary"/>
+					<select value="0.35" t="highway" v="primary_link"/>
+				</ifnot></if>
+			</ifnot></if>
 
 			<!-- D: main roads, depending on cycling facilities -->
 			<if t="highway" v="tertiary">
