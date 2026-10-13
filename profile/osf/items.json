@@ -1,0 +1,15 @@
+{
+  "version": 3,
+  "items": [
+    {"type": "FILE", "file": "/routing/veloele.xml", "subtype": "routing_config"},
+    {"type": "FILE", "file": "/rendering/veloele.render.xml", "subtype": "rendering_style"},
+    {"type": "POI_UI_FILTERS", "file": "poi_ui_filters.json"},
+    {"type": "QUICK_ACTIONS", "file": "quick_actions_1791763200000.json",
+     "buttonState": {"id": "quick_actions_1791763200000", "enabled": true}},
+    {"type": "PROFILE", "file": "profile_veloele.json",
+     "appMode": {"iconColor": "BLUE", "customIconColor": -30720, "iconName": "mx_activities_bicycle", "locIcon": "BICYCLE",
+                 "navIcon": "DEFAULT", "order": 13, "parent": "bicycle", "routeService": "OSMAND",
+                 "routingProfile": "veloele.xml/veloele", "stringKey": "veloele",
+                 "userProfileName": "Velöle", "version": -1}}
+  ]
+}

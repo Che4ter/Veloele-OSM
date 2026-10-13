@@ -1,0 +1,10 @@
+{
+  "items": [
+    {"name": "Wasser", "filterId": "user_wasser",
+     "acceptedTypes": "{\"man_made\":[\"drinking_water\",\"water_point\",\"water_well\",\"standpipe\",\"watering_place\",\"cemetery\"],\"service\":[\"water_tap\"],\"natural\":[\"spring\"],\"tourism\":[\"fountain\",\"grave_yard\"]}"},
+    {"name": "Übernachten", "filterId": "user_uebernachten",
+     "acceptedTypes": "{\"tourism\":[\"camp_site\",\"camp_pitch\",\"caravan_site\",\"alpine_hut\",\"wilderness_hut\",\"cabin\"],\"service\":[\"shelter\",\"shower\",\"toilets\"]}"},
+    {"name": "Essen unterwegs", "filterId": "user_essen_unterwegs",
+     "acceptedTypes": "{\"shop\":[\"bakery\",\"butcher\",\"cheese\",\"supermarket\",\"convenience\",\"greengrocer\",\"farm\",\"marketplace\",\"ice_cream\"],\"sustenance\":[\"cafe\",\"biergarten\"]}"}
+  ]
+}

@@ -1,0 +1,654 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Velöle (veloele): OsmAnd bicycle routing for loaded touring bikes.
+  Based on OsmAnd's stock bicycle profile (OsmAnd-resources routing/routing.xml).
+  Changes: cycle paths, bicycle streets, shared foot/cycle paths and signed cycle routes are
+  clearly preferred over ordinary streets; main roads without cycle facilities and
+  footways are avoided; riding speeds are realistic (~18 km/h) for a sensible ETA.
+  Install: copy into OsmAnd's data folder under routing/ and create a new app profile
+  that uses the "veloele" routing.
+-->
+<osmand_routing_config defaultProfile="veloele" name="veloele">
+	<attribute name="zoomToLoadTiles" value="16" />
+	<attribute name="planRoadDirection" value="0" />
+	<attribute name="recalculateDistanceHelp" value="10000" />
+
+	<routingProfile name="veloele" baseProfile="bicycle" restrictionsAware="true" minSpeed="5" defaultSpeed="18" maxSpeed="20" sharpTurn="30" slightTurn="15" followSpeedLimitations="false" onewayAware="true" heuristicCoefficient="1.6">
+		<attribute name="penaltyForReverseDirection" value="60" /> <!-- bike: ~ 1 minute to turn back -->
+
+
+		<!-- New ROUTING API -->
+
+		<!--<parameter id="driving_style" name="Driving style" description="Safe, fast or balanced driving" type="numeric" values="0,1,2" valueDescriptions="Safety,Balance,Speed"/>-->
+		<!--<parameter id="relief_smoothness_factor" name="Relief smoothness factor" description="More plains or more hills" type="numeric" values="0,1,2" valueDescriptions="More plains,Balance,More hills"/>-->
+
+
+		<parameter id="relief_smoothness_factor_more_plains" group="relief_smoothness_factor" name="More plains" description="" type="boolean"/>
+		<parameter id="relief_smoothness_factor_plains" group="relief_smoothness_factor" name="Plains" description="" type="boolean" default="true"/>
+		<parameter id="relief_smoothness_factor_hills" group="relief_smoothness_factor" name="Hills" description="" type="boolean"/>
+		<parameter id="prefer_unpaved" name="Prefer unpaved roads" description="Prefer unpaved roads" type="boolean"/>
+		<parameter id="avoid_unpaved" name="Avoid unpaved roads" description="Avoid unpaved roads" type="boolean"/>
+		<parameter id="avoid_ferries" name="Avoid ferries" description="Avoid ferries" type="boolean" default="true"/>
+		<parameter id="avoid_stairs" name="Avoid stairs" description="Avoid stairs" type="boolean"/>
+		<parameter id="avoid_borders" name="Avoid border crossing" description="Avoid crossing a border into another country" type="boolean"/>
+		<parameter id="avoid_fords" name="Avoid fords" description="Avoid fords" type="boolean"/>
+		<parameter id="allow_private" name="Allow private access" description="Allow access to private areas" type="boolean"/>
+		<parameter id="height_obstacles" name="Use elevation data" description="Use terrain elevation data provided by SRTM, ASTER and EU-DEM" type="boolean" default="false"/>
+		<parameter id="width" name="Width" description="Minimum bicycle width allowed on the route" type="numeric" values="0,0.6,0.7,0.8,0.9,1,1.1,1.2,1.3,1.5,2" valueDescriptions="-,0.6m,0.7m,0.8m,0.9m,1m,1.1m,1.2m,1.3m,1.5m,2m"/>
+
+		<way attribute="access">
+			<select value="-1" t="osmand_change" v="delete"/>
+			<select value="-1" t="highway" v="proposed"/>
+			<select value="-1" t="highway" v="construction"/>
+			<select value="-1" t="construction" v="yes"/>
+			<select value="-1" t="width">
+				<gt value1=":width" value2="$width" type="length"/>
+			</select>
+			<select value="-1" t="cycleway:width">
+				<gt value1=":width" value2="$cycleway:width" type="length"/>
+			</select>
+
+
+			<if param="avoid_ferries">
+			    <select value="-1" t="route" v="ferry"/>
+			    <select value="-1" t="route" v="boat"/>
+			</if>
+
+			<if param="avoid_stairs">
+			    <select value="-1" t="highway" v="steps"/>
+			</if>
+			<if param="avoid_fords">
+			    <select value="-1" t="ford" v="yes"/>
+			</if>
+			<select value="-1" t="highway" v="motorway"/>
+			<select value="-1" t="highway" v="motorway_link"/>
+			<select value="-1" t="motorroad" v="yes"/>
+			<!-- lines above: These lines should be moved here
+			to make sure that motorways are excluded if they
+			are not explicitly allowed by the user.-->
+			<select value="-1" t="highway" v="elevator"/>
+			<select value="-1" t="bicycle" v="no"/>
+			<select value="1"  t="bicycle" v="yes"/>
+			<select value="1"  t="bicycle" v="permissive"/>
+			<select value="1"  t="bicycle" v="designated"/>
+			<select value="1"  t="cycleway:bicycle" v="designated"/>
+			<select value="1"  t="bicycle" v="destination"/>
+			<!-- <select value="1"  t="bicycle" v="official"/> Already done by an entity_convert when creating the map files -->
+			<!-- <select value="-1"  t="bicycle" v="use_sidepath"/> Already done by an entity_convert when creating the map files -->
+			<select value="1"  t="bicycle" v="dismount"/>
+
+			<select value="-1" t="sac_scale" v="demanding_mountain_hiking"/>
+			<select value="-1" t="sac_scale" v="alpine_hiking"/>
+			<select value="-1" t="sac_scale" v="demanding_alpine_hiking"/>
+			<select value="-1" t="sac_scale" v="difficult_alpine_hiking"/>
+			<select value="-1" t="mtb:scale" v="5"/>
+			<select value="-1" t="mtb:scale" v="6"/>
+			<if param="allow_private">
+				<select value="1" t="vehicle" v="private"/>
+			</if>
+			<select value="-1" t="vehicle" v="private"/>
+			<select value="-1" t="vehicle" v="agricultural"/>
+			<select value="-1" t="vehicle" v="forestry"/>
+			<select value="-1" t="vehicle" v="agricultural;forestry"/>
+			<select value="-1" t="vehicle" v="forestry;agricultural"/>
+			<select value="1"  t="vehicle" v="yes"/>
+			<select value="1"  t="vehicle" v="permissive"/>
+			<select value="1"  t="vehicle" v="designated"/>
+			<select value="1"  t="vehicle" v="destination"/>
+			
+			<select value="-1" t="access" v="no"/>
+			<if param="allow_private">
+				<select value="1" t="vehicle" v="private"/>
+			</if>
+			<select value="-1" t="access" v="private"/>
+			<select value="1" t="access" v="agricultural"/>
+			<select value="1" t="access" v="forestry"/>
+			<select value="1" t="access" v="agricultural;forestry"/>
+			<select value="1" t="access" v="forestry;agricultural"/>
+			<select value="1"  t="access" v="yes"/>
+			<select value="1"  t="access" v="permissive"/>
+			
+			<select value="-1" t="vehicle" v="no"/>
+
+			<select value="1" t="highway" v="cycleway"/>
+			<select value="1" t="route_bicycle"/>
+			<!--<select value="-1" t="crossing" v="no"/>--> <!-- See https://github.com/osmandapp/Osmand/issues/6678 -->
+
+
+			<select value="1" t="highway" v="trunk"/>
+			<select value="1" t="highway" v="trunk_link"/>
+			<!-- a user indicated a trunk road in England that was a
+			a necessary link. So only in safety style trunk is excluded now. -->
+			<select value="1" t="highway" v="primary"/>
+			<select value="1" t="highway" v="primary_link"/>
+			<select value="1" t="highway" v="secondary"/>
+			<select value="1" t="highway" v="secondary_link"/>
+			<select value="1" t="highway" v="tertiary"/>
+			<select value="1" t="highway" v="tertiary_link"/>
+			<select value="1" t="highway" v="road"/>
+			<select value="1" t="highway" v="residential"/>
+			<select value="1" t="highway" v="unclassified"/>
+			<select value="1" t="highway" v="service"/>
+			<select value="1" t="highway" v="track"/>
+			<select value="1" t="highway" v="path"/>
+			<select value="1" t="highway" v="footway"/>
+			<select value="1" t="highway" v="living_street"/>
+			<select value="1" t="highway" v="pedestrian"/>
+			<select value="1" t="highway" v="byway"/>
+			<select value="1" t="public_transport" v="platform"/>
+			<select value="1" t="man_made" v="pier"/>
+			<select value="1" t="highway" v="services"/>
+			<select value="1" t="highway" v="bridleway"/>
+			<select value="1" t="highway" v="steps"/>
+			<select value="1" t="route" v="ferry"/>
+			<select value="-1"/>
+		</way>
+
+		<way attribute="oneway">
+			<select value="0" t="cycleway" v="opposite_lane"/>
+			<select value="0" t="cycleway" v="opposite_track"/>
+			<select value="0" t="cycleway" v="opposite_share_busway"/>
+			<select value="0" t="cycleway" v="opposite"/>
+			<select value="0" t="oneway:bicycle" v="no"/>
+			<select value="1" t="oneway:bicycle" v="yes"/>
+			<select value="-1" t="oneway:bicycle" v="-1"/>
+			
+			<select value="1" t="oneway:vehicle" v="yes"/>
+			<select value="0" t="oneway:vehicle" v="no"/>
+			<select value="-1" t="oneway:vehicle" v="-1"/>
+			<select value="1" t="vehicle:backward" v="no"/>
+			<select value="-1" t="vehicle:forward" v="no"/>
+			<select value="1" t="bicycle:backward" v="no"/>
+			<select value="-1" t="bicycle:forward" v="no"/>
+
+			<select value="1" t="oneway" v="yes"/>
+			<select value="1" t="oneway" v="1"/>
+			<select value="-1" t="oneway" v="-1"/>
+            <!-- Following line because junction=circular is converted to roundabout, but is not necessarily oneway=yes -->
+			<select value="0" t="oneway" v="no"/>
+			<select value="1" t="roundabout" v="yes"/>
+			<select value="1" t="junction" v="roundabout"/>
+		</way>
+
+		<!-- SPEED: realistic riding speed (km/h). Only used for the ETA and as the
+		     base of the routing cost. Preferences live in "priority" below. -->
+		<way attribute="speed" type="speed">
+			<select value="1.3" t="highway" v="steps"/>
+			<select value="10" t="route" v="ferry"/>
+			<select value="6" t="bicycle" v="dismount"/>
+
+			<!-- "Prefer unpaved roads" (gravel bike): unpaved is ridden faster -->
+			<if param="prefer_unpaved">
+				<select value="17" t="surface" v="compacted"/>
+				<select value="17" t="surface" v="fine_gravel"/>
+				<select value="15" t="surface" v="gravel"/>
+				<select value="15" t="surface" v="unpaved"/>
+				<select value="15" t="tracktype" v="grade2"/>
+				<select value="15" t="tracktype" v="grade3"/>
+				<select value="13" t="surface" v="dirt"/>
+				<select value="13" t="surface" v="earth"/>
+				<select value="13" t="surface" v="ground"/>
+				<select value="13" t="surface" v="pebblestone"/>
+				<select value="13" t="tracktype" v="grade4"/>
+				<select value="16" t="highway" v="track"/>
+			</if>
+
+			<!-- rough surfaces are slow wherever they are -->
+			<select value="5" t="surface" v="mud"/>
+			<select value="6" t="surface" v="sand"/>
+			<select value="7" t="surface" v="grass"/>
+			<select value="8" t="surface" v="grass_paver"/>
+			<select value="8" t="surface" v="pebblestone"/>
+			<select value="9" t="surface" v="unhewn_cobblestone"/>
+			<select value="10" t="surface" v="cobblestone"/>
+			<select value="10" t="surface" v="dirt"/>
+			<select value="10" t="surface" v="earth"/>
+			<select value="10" t="surface" v="ground"/>
+			<select value="11" t="surface" v="unpaved"/>
+			<select value="11" t="surface" v="gravel"/>
+			<select value="5" t="smoothness" v="impassable"/>
+			<select value="6" t="smoothness" v="very_horrible"/>
+			<select value="7" t="smoothness" v="horrible"/>
+			<select value="9" t="smoothness" v="very_bad"/>
+			<select value="12" t="smoothness" v="bad"/>
+			<select value="8" t="tracktype" v="grade5"/>
+			<select value="11" t="tracktype" v="grade4"/>
+			<select value="13" t="surface" v="sett"/>
+			<select value="15" t="surface" v="compacted"/>
+			<select value="15" t="surface" v="fine_gravel"/>
+			<select value="14" t="tracktype" v="grade3"/>
+			<!-- easy gravel / good tracks: a loaded touring bike rides these nearly like asphalt.
+			     Only on tracks: an asphalt road that also carries tracktype keeps 18. -->
+			<if t="highway" v="track">
+				<select value="15" t="tracktype" v="grade2"/>
+				<select value="15" t="tracktype" v="grade1"/>
+			</if>
+			<select value="15" t="surface" v="wood"/>
+
+			<!-- footways / pedestrian zones where cycling is not explicitly allowed: walking the bike -->
+			<ifnot t="bicycle" v="designated"><ifnot t="bicycle" v="yes"><ifnot t="bicycle" v="permissive">
+				<select value="6" t="footway" v="sidewalk"/>
+				<select value="7" t="highway" v="footway"/>
+				<select value="7" t="highway" v="pedestrian"/>
+				<select value="7" t="highway" v="bridleway"/>
+				<select value="12" t="highway" v="path"/>
+			</ifnot></ifnot></ifnot>
+			<select value="12" t="highway" v="pedestrian"/>
+
+			<select value="17" t="surface" v="paving_stones"/>
+			<select value="14" t="highway" v="track"/>
+			<select value="18"/>
+		</way>
+
+		<way attribute="obstacle_srtm_alt_speed">
+			<if param="height_obstacles">
+				<ge value1="-100" value2=":incline">
+					<select value="-1" t="osmand_highway_integrity_brouting_low" v="yes"/>
+					<select value="-1" t="highway" v="path"/>
+					<select value="-1" t="highway" v="track"/>
+				</ge>
+				<ge value1="-35" value2=":incline">
+					<select value="30" t="osmand_highway_integrity_brouting_low" v="yes"/>
+					<select value="30" t="highway" v="path"/>
+					<select value="25" t="highway" v="track"/>
+				</ge>
+				<ge value1="-17" value2=":incline">
+					<select value="7.7" t="osmand_highway_integrity_brouting_low" v="yes"/>
+					<select value="7.7" t="highway" v="path"/>
+					<select value="6.4" t="highway" v="track"/>
+				</ge>
+				<if param="relief_smoothness_factor_more_plains">
+					<ge value1="3" value2=":incline">
+						<select value="2"/>
+					</ge>
+					<ge value1="7" value2=":incline">
+						<select value="12"/>
+					</ge>
+					<ge value1="13" value2=":incline">
+						<select value="30"/>
+					</ge>
+					<ge value1="25" value2=":incline">
+						<select value="50"/>
+					</ge>
+					<select value="74"/>
+				</if>
+				<if param="relief_smoothness_factor_hills">
+					<ge value1="1" value2=":incline">
+						<select value="61"/>
+					</ge>
+					<ge value1="3" value2=":incline">
+						<select value="19.7"/>
+					</ge>
+					<ge value1="7" value2=":incline">
+						<select value="7.5"/>
+					</ge>
+					<ge value1="13" value2=":incline">
+						<select value="3"/>
+					</ge>
+					<ge value1="25" value2=":incline">
+						<select value="0.5"/>
+					</ge>
+					<select value="0.3"/>
+				</if>
+				<ge value1="3" value2=":incline">
+					<select value="2"/>
+				</ge>
+				<ge value1="7" value2=":incline">
+					<select value="8"/>
+				</ge>
+				<ge value1="13" value2=":incline">
+					<select value="16"/>
+				</ge>
+				<ge value1="25" value2=":incline">
+					<select value="32"/>
+				</ge>
+				<select value="48"/>
+			</if>
+		</way>
+
+		<!-- PRIORITY: how much we like a way (1.0 = best). Routing cost is
+		     length / (speed * priority), so 0.8 means "worth a 25% detour to avoid".
+		     Rules are first-match: specific cases first. -->
+		<way attribute="priority">
+			<select value="0.1" t="bicycle" v="private"/>
+			<select value="0.2" t="bicycle" v="destination"/>
+			<!-- steps on hiking trails (long mountain staircases): carrying a loaded bike,
+			     10 m ~ a 3.5 km detour (speed is raised to minSpeed 5, cost = 18 / (5 * priority)).
+			     Short town steps keep the stock values, so start points next to them still work. -->
+			<if t="highway" v="steps"><select value="0.01" t="route_hiking"/></if>
+			<select value="0.1" t="steps_ramp" v="no"/>
+			<select value="0.3" t="highway" v="steps"/>
+			<select value="0.3" t="indoor" v="yes"/>
+			<select value="0.1" t="barrier" v="debris"/>
+			<select value="0.1" t="sac_scale" v="mountain_hiking"/>
+			<select value="0.3" t="mtb:scale" v="1"/>
+			<select value="0.2" t="mtb:scale" v="2"/>
+			<select value="0.1" t="mtb:scale" v="3"/>
+			<select value="0.05" t="mtb:scale" v="4"/>
+
+			<!-- a road whose cyclists must use the separate fietspad next to it -->
+			<select value="0.15" t="bicycle" v="use_sidepath"/>
+			<select value="0.3" t="bicycle:forward" v="use_sidepath"/>
+			<select value="0.3" t="bicycle:backward" v="use_sidepath"/>
+
+			<if param="avoid_unpaved">
+				<select value="0.15" t="surface" v="mud"/>
+				<select value="0.15" t="surface" v="sand"/>
+				<select value="0.2" t="surface" v="grass"/>
+				<select value="0.2" t="surface" v="dirt"/>
+				<select value="0.2" t="surface" v="earth"/>
+				<select value="0.2" t="surface" v="ground"/>
+				<select value="0.25" t="surface" v="unpaved"/>
+				<select value="0.3" t="surface" v="gravel"/>
+				<select value="0.3" t="surface" v="pebblestone"/>
+				<select value="0.4" t="surface" v="compacted"/>
+				<select value="0.4" t="surface" v="fine_gravel"/>
+				<select value="0.3" t="tracktype" v="grade3"/>
+				<select value="0.2" t="tracktype" v="grade4"/>
+				<select value="0.15" t="tracktype" v="grade5"/>
+			</if>
+
+			<!-- "Prefer unpaved roads" (gravel bike): tracks and paths are as good as fietspaden
+			     (path + foot=designated is already turned into footway by OsmAnd, so it is not matched) -->
+			<if param="prefer_unpaved">
+				<select value="0.6" t="mtb:scale" v="1"/>
+				<ifnot t="surface" v="mud"><ifnot t="surface" v="sand">
+					<if t="route_bicycle">
+						<select value="1.0" t="highway" v="track"/>
+						<select value="1.0" t="highway" v="path"/>
+					</if>
+					<select value="0.95" t="highway" v="track"/>
+					<select value="0.95" t="highway" v="path"/>
+					<select value="0.95" t="highway" v="bridleway"/>
+				</ifnot></ifnot>
+			</if>
+
+			<!-- touring bike: cobblestones and sett shake a loaded bike (total cost ~3x / ~2x asphalt
+			     together with the lower speed, relative to the same way in asphalt: value ~ own priority x 0.6
+			     for cobblestone, x 0.7 for sett). Priorities are first-match, not multiplied, so this only
+			     applies where the way's own priority is higher (pedestrian zones, footways, service roads,
+			     tracks and main roads keep their own, already lower one). -->
+			<if t="bicycle" v="designated">
+				<select value="0.55" t="surface" v="cobblestone"/>
+				<select value="0.55" t="surface" v="unhewn_cobblestone"/>
+				<select value="0.7" t="surface" v="sett"/>
+			</if>
+			<if t="highway" v="cycleway">
+				<select value="0.55" t="surface" v="cobblestone"/>
+				<select value="0.55" t="surface" v="unhewn_cobblestone"/>
+				<select value="0.7" t="surface" v="sett"/>
+			</if>
+			<if t="highway" v="living_street">
+				<select value="0.55" t="surface" v="cobblestone"/>
+				<select value="0.55" t="surface" v="unhewn_cobblestone"/>
+				<select value="0.6" t="surface" v="sett"/>
+			</if>
+			<if t="highway" v="residential">
+				<select value="0.5" t="surface" v="cobblestone"/>
+				<select value="0.5" t="surface" v="unhewn_cobblestone"/>
+				<select value="0.55" t="surface" v="sett"/>
+			</if>
+			<if t="highway" v="unclassified">
+				<select value="0.5" t="surface" v="cobblestone"/>
+				<select value="0.5" t="surface" v="unhewn_cobblestone"/>
+				<select value="0.55" t="surface" v="sett"/>
+			</if>
+			<if t="highway" v="road">
+				<select value="0.5" t="surface" v="cobblestone"/>
+				<select value="0.5" t="surface" v="unhewn_cobblestone"/>
+				<select value="0.55" t="surface" v="sett"/>
+			</if>
+
+			<!-- A: dedicated cycling infrastructure, no cars -->
+			<if t="highway" v="cycleway">
+				<select value="0.95" t="moped" v="designated"/> <!-- fiets/bromfietspad -->
+				<select value="1.0"/>
+			</if>
+			<if t="bicycle" v="designated">
+				<!-- shared fiets/voetpad, park and dune paths (fixes stock footway penalty) -->
+				<select value="1.0" t="highway" v="footway"/>
+				<select value="1.0" t="highway" v="path"/>
+				<select value="0.9" t="highway" v="pedestrian"/>
+				<select value="0.9" t="highway" v="bridleway"/>
+				<select value="0.95" t="highway" v="track"/>
+			</if>
+			<select value="1.0" t="cyclestreet" v="yes"/> <!-- fietsstraat -->
+			<select value="1.0" t="bicycle_road" v="yes"/>
+			<select value="0.95" t="cycleway" v="track"/>
+			<select value="0.95" t="cycleway" v="opposite_track"/>
+			<select value="0.95" t="cycleway:both" v="track"/>
+			<if t="motor_vehicle" v="no">
+				<select value="0.95" t="highway" v="unclassified"/>
+				<select value="0.95" t="highway" v="residential"/>
+				<select value="0.95" t="highway" v="service"/>
+				<select value="0.95" t="highway" v="track"/>
+				<select value="0.95" t="highway" v="road"/>
+			</if>
+
+			<!-- B: signed cycle routes (LF, knooppunten) and near car-free roads -->
+			<if t="route_bicycle">
+				<select value="0.9" t="highway" v="unclassified"/>
+				<select value="0.9" t="highway" v="residential"/>
+				<select value="0.9" t="highway" v="living_street"/>
+				<select value="0.9" t="highway" v="service"/>
+				<select value="0.85" t="highway" v="track"/>
+				<select value="0.85" t="highway" v="path"/>
+				<select value="0.85" t="highway" v="road"/>
+			</if>
+			<ifnot t="highway" v="footway"><ifnot t="highway" v="pedestrian"><ifnot t="highway" v="path"><ifnot t="highway" v="steps">
+				<select value="0.88" t="motor_vehicle" v="agricultural"/>
+				<select value="0.88" t="motor_vehicle" v="destination"/>
+				<select value="0.88" t="motor_vehicle" v="delivery"/>
+				<select value="0.88" t="motor_vehicle" v="private"/>
+			</ifnot></ifnot></ifnot></ifnot>
+
+			<!-- C: quiet streets and minor roads -->
+			<select value="0.85" t="highway" v="living_street"/>
+			<if t="highway" v="residential">
+				<select value="0.82" t="cycleway" v="lane"/>
+				<select value="0.82" t="cycleway:both" v="lane"/>
+				<select value="0.8"/>
+			</if>
+			<if t="highway" v="unclassified">
+				<select value="0.8" t="cycleway" v="lane"/>
+				<select value="0.8" t="cycleway:both" v="lane"/>
+				<select value="0.8" t="cycleway" v="shared_lane"/>
+				<select value="0.75"/>
+			</if>
+			<if t="bicycle" v="yes">
+				<select value="0.85" t="highway" v="path"/>
+				<select value="0.8" t="highway" v="footway"/>
+				<select value="0.6" t="highway" v="pedestrian"/>
+			</if>
+			<if t="bicycle" v="permissive">
+				<select value="0.85" t="highway" v="path"/>
+				<select value="0.8" t="highway" v="footway"/>
+				<select value="0.6" t="highway" v="pedestrian"/>
+			</if>
+			<if t="highway" v="track">
+				<select value="0.8" t="surface" v="asphalt"/>
+				<select value="0.8" t="surface" v="concrete"/>
+				<select value="0.8" t="surface" v="paved"/>
+				<select value="0.8" t="tracktype" v="grade1"/>
+				<!-- easy gravel is as good as a paved track; rough surfaces stay at 0.65 -->
+				<select value="0.8" t="surface" v="compacted"/>
+				<select value="0.8" t="surface" v="fine_gravel"/>
+				<select value="0.65" t="surface" v="gravel"/>
+				<select value="0.65" t="surface" v="unpaved"/>
+				<select value="0.65" t="surface" v="dirt"/>
+				<select value="0.65" t="surface" v="earth"/>
+				<select value="0.65" t="surface" v="ground"/>
+				<select value="0.65" t="surface" v="grass"/>
+				<select value="0.65" t="surface" v="sand"/>
+				<select value="0.65" t="surface" v="mud"/>
+				<select value="0.65" t="surface" v="pebblestone"/>
+				<select value="0.8" t="tracktype" v="grade2"/>
+				<select value="0.65"/>
+			</if>
+			<if t="highway" v="service">
+				<select value="0.4" t="service" v="parking_aisle"/>
+				<select value="0.5" t="service" v="driveway"/>
+				<select value="0.65"/>
+			</if>
+
+			<!-- national/international cycle routes on secondary/primary roads (e.g. Swiss
+			     national routes): the route planners chose these roads, so they get a minimum
+			     priority, except where the speed limit is 60 or more. Not for tertiary roads
+			     or regional/local routes (knooppunten): in NL that would pull routes off
+			     fietspaden onto LF dike roads. -->
+			<if t="route_bicycle"><if t="network" v="icn"><ifnot t="maxspeed" v="60"><ifnot t="maxspeed" v="70"><ifnot t="maxspeed" v="80"><ifnot t="maxspeed" v="90"><ifnot t="maxspeed" v="100">
+				<select value="0.6" t="highway" v="secondary"/>
+				<select value="0.6" t="highway" v="secondary_link"/>
+				<select value="0.5" t="highway" v="primary"/>
+				<select value="0.5" t="highway" v="primary_link"/>
+			</ifnot></ifnot></ifnot></ifnot></ifnot></if></if>
+			<if t="route_bicycle"><if t="network" v="ncn"><ifnot t="maxspeed" v="60"><ifnot t="maxspeed" v="70"><ifnot t="maxspeed" v="80"><ifnot t="maxspeed" v="90"><ifnot t="maxspeed" v="100">
+				<select value="0.6" t="highway" v="secondary"/>
+				<select value="0.6" t="highway" v="secondary_link"/>
+				<select value="0.5" t="highway" v="primary"/>
+				<select value="0.5" t="highway" v="primary_link"/>
+			</ifnot></ifnot></ifnot></ifnot></ifnot></if></if>
+
+			<!-- D: main roads, depending on cycling facilities -->
+			<if t="highway" v="tertiary">
+				<select value="0.65" t="cycleway" v="lane"/>
+				<select value="0.65" t="cycleway:both" v="lane"/>
+				<select value="0.6" t="cycleway" v="shared_lane"/>
+				<select value="0.6" t="cycleway" v="share_busway"/>
+				<select value="0.5"/>
+			</if>
+			<if t="highway" v="tertiary_link">
+				<select value="0.65" t="cycleway" v="lane"/>
+				<select value="0.5"/>
+			</if>
+			<if t="highway" v="secondary">
+				<select value="0.55" t="cycleway" v="lane"/>
+				<select value="0.55" t="cycleway:both" v="lane"/>
+				<select value="0.35"/>
+			</if>
+			<if t="highway" v="secondary_link">
+				<select value="0.55" t="cycleway" v="lane"/>
+				<select value="0.35"/>
+			</if>
+			<if t="highway" v="primary">
+				<select value="0.45" t="cycleway" v="lane"/>
+				<select value="0.45" t="cycleway:both" v="lane"/>
+				<select value="0.25"/>
+			</if>
+			<if t="highway" v="primary_link">
+				<select value="0.45" t="cycleway" v="lane"/>
+				<select value="0.25"/>
+			</if>
+			<select value="0.15" t="highway" v="trunk"/>
+			<select value="0.15" t="highway" v="trunk_link"/>
+			<select value="0.1" t="highway" v="motorway"/>
+			<select value="0.1" t="highway" v="motorway_link"/>
+			<select value="0.6" t="highway" v="road"/>
+
+			<!-- E: ways where cycling is not allowed by default in NL (push the bike) -->
+			<select value="0.1" t="footway" v="sidewalk"/>
+			<select value="0.2" t="highway" v="footway"/>
+			<select value="0.2" t="highway" v="pedestrian"/>
+			<select value="0.1" t="highway" v="bridleway"/>
+			<select value="0.4" t="highway" v="path"/>
+			<select value="0.7"/>
+		</way>
+
+		<way attribute="destination_priority">
+		     <select value="0.5" t="tunnel" v="yes"/>
+		</way>
+
+		<point attribute="obstacle_time">
+			<select value="10" t="barrier" v="cycle_barrier"/>
+			<select value="15" t="barrier" v="gate"/>
+			<select value="20" t="barrier" v="lift_gate"/>
+			<select value="20" t="barrier" v="swing_gate"/>
+			<select value="15" t="barrier" v="log"/>
+			<select value="5"  t="barrier"/>
+			<select value="15" t="highway" v="traffic_signals"/>
+			<select value="10" t="crossing" v="unmarked"/>
+			<select value="5"  t="crossing" v="uncontrolled"/>
+			<select value="15" t="crossing" v="traffic_signals"/>
+			<select value="15" t="highway" v="stop"/>
+			<select value="7"  t="highway" v="give_way"/>
+			<select value="200" t="ford"/>
+			<select value="25" t="railway" v="crossing"/>
+			<select value="25" t="railway" v="level_crossing"/>
+			<select value="5"  t="railway" v="tram_level_crossing"/>
+
+		</point>
+
+		<point attribute="obstacle">
+			<if param="avoid_borders">
+				<select value="-1" t="barrier" v="border_control"/>
+			</if>
+
+			<select value="0" t="red_turn:straight:bicycle" v="yes"/>
+			<!-- Lines above: These values are only a workaround. They apply until 
+			one issue is resolved: The triple counting of traffic lights at main
+			junctions. This can hopefully be resolved within map rendering.
+			Any combination of values that we put here (into the routing.xml)
+			leads to routing errors. The above is only a compromise to minimize
+			those errors.-->
+			
+			<select value="6" t="crossing" v="traffic_signals"/>
+			<select value="1" t="crossing" v="uncontrolled"/>
+			<select value="3" t="crossing" v="unmarked"/>
+			<select value="1" t="crossing" v="island"/>
+			<!-- Lines above: These values should not get too high, because
+			in maps, crossing=island is often combined with either two nodes
+			"crossing=unmarked" or two nodes "crossing=traffic_signals".
+			So, often you get triple counting here as well. And the crossing
+			of a main road very often cannot get a penalty at all: Often,
+			a crossing is not marked as a crossing and this makes it impossible
+			to apply any penalty. So it would make no sense to just apply a high
+			penalty on some cases. -->
+			<select value="5" t="crossing" v="island;traffic_signals"/>
+			<select value="12" t="highway" v="traffic_signals"/>
+			<select value="55"  t="highway" v="steps"/>
+			<select value="15"  t="bicycle" v="dismount"/>
+			<select value="200" t="ford" v="yes"/>
+			<select value="300" t="amenity" v="ferry_terminal"/>
+
+			<!-- ignore bicycle=no on highway=crossing -->
+			<select value="0" t="highway" v="crossing"/>
+
+			<select value="-1" t="bicycle" v="no"/>
+			<select value="0"  t="bicycle" v="yes"/>
+			<select value="0"  t="bicycle" v="permissive"/>
+			<select value="0"  t="bicycle" v="designated"/>
+			<select value="0"  t="bicycle" v="official"/>
+
+			<select value="-1" t="vehicle" v="no"/>
+			<select value="0" t="vehicle" v="agricultural"/>
+			<select value="0" t="vehicle" v="forestry"/>
+			<select value="0" t="vehicle" v="agricultural;forestry"/>
+			<select value="0" t="vehicle" v="forestry;agricultural"/>
+			<select value="0"  t="vehicle" v="yes"/>
+			<select value="0"  t="vehicle" v="permissive"/>
+			<select value="0"  t="vehicle" v="designated"/>
+
+			<select value="-1" t="access" v="no"/>
+			<select value="0" t="access" v="agricultural"/>
+			<select value="0" t="access" v="forestry"/>
+			<select value="0" t="access" v="agricultural;forestry"/>
+			<select value="0" t="access" v="forestry;agricultural"/>
+			<select value="0"  t="access" v="yes"/>
+			<select value="0"  t="access" v="permissive"/>
+			<if param="allow_private">
+				<select value="180"  t="access" v="private"/>
+			</if>
+			<select value="-1" t="access" v="private"/>
+
+			<select value="1"   t="barrier" v="height_restrictor"/>
+			<select value="1"   t="barrier" v="coupure"/>
+
+			<!--<select value="-1" t="crossing" v="no"/>-->
+
+		</point>
+
+		<way attribute="penalty_transition">
+			<select value="45" t="area" v="yes"/>
+		</way>
+	</routingProfile>
+</osmand_routing_config>

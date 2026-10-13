@@ -1,0 +1,19 @@
+# --- in town (navigating to a POI) ---
+CS->Scheveningen Pier;52.0805,4.3245;52.1150,4.2790
+HS->Kijkduin;52.0697,4.3220;52.0705,4.2215
+CS->Delft Markt;52.0805,4.3245;52.0118,4.3590
+Statenkwartier->Ypenburg;52.0905,4.2905;52.0430,4.3705
+Leidschendam->Zuiderpark;52.0840,4.3930;52.0590,4.2870
+Loosduinen->Rijswijk;52.0565,4.2505;52.0455,4.3195
+Scheveningen->Madurodam;52.1095,4.2750;52.0990,4.2995
+Binnenhof->Haagse Bos;52.0798,4.3132;52.0890,4.3420
+# --- regional ---
+DenHaag->Leiden CS;52.0805,4.3245;52.1665,4.4815
+DenHaag->Rotterdam CS;52.0805,4.3245;51.9245,4.4690
+DenHaag->Gouda;52.0805,4.3245;52.0115,4.7105
+DenHaag->Hoek v Holland;52.0805,4.3245;51.9780,4.1335
+# --- across the country ---
+DenHaag->Utrecht CS;52.0805,4.3245;52.0895,5.1105
+DenHaag->Amersfoort;52.0805,4.3245;52.1555,5.3880
+DenHaag->Arnhem;52.0805,4.3245;51.9850,5.8995
+DenHaag->Nijmegen;52.0805,4.3245;51.8430,5.8530

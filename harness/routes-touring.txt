@@ -1,0 +1,4 @@
+# --- town centres with sett/cobbles (touring tuning probes; Oudegracht is sett, parallel streets are not) ---
+Utrecht Weerdsluis->Geertebrug;52.0975,5.1150;52.0850,5.1226
+Utrecht Gaardbrug->Smeebrug;52.0892,5.1212;52.0863,5.1222
+Utrecht Bemuurde Weerd->Domplein;52.0978,5.1148;52.0907,5.1213

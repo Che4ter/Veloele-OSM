@@ -1,0 +1,14 @@
+# big downloads / tools
+maps/
+mapcreator/
+regions.ocbf
+results/
+# build output
+dist/
+# local superpowers artifacts
+.superpowers/
+__pycache__/
+# internal design notes (local paths, private style details)
+docs/superpowers/
+# local tool data
+.serena/

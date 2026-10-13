@@ -1,0 +1,9 @@
+{
+  "items": [
+    {"name": "Wasser", "actionType": "poi.showhide", "params": "{\"filters\":\"[\\\"user_wasser\\\"]\"}"},
+    {"name": "Übernachten", "actionType": "poi.showhide", "params": "{\"filters\":\"[\\\"user_uebernachten\\\"]\"}"},
+    {"name": "Essen unterwegs", "actionType": "poi.showhide", "params": "{\"filters\":\"[\\\"user_essen_unterwegs\\\"]\"}"},
+    {"name": "Toilette", "actionType": "poi.showhide", "params": "{\"filters\":\"[\\\"std_toilets\\\"]\"}"},
+    {"name": "Nächstgelegene POIs", "actionType": "poi.showhide", "params": "{\"filters\":\"[\\\"std_null\\\"]\"}"}
+  ]
+}
