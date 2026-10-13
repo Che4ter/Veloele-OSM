@@ -98,7 +98,9 @@ Open [brouter-web](https://brouter.m11n.de) (or any other instance), then
 
 Built in: turn penalty 15 s, traffic lights, stop signs, cycle barriers and
 fords cost extra; roads with high maxspeed or estimated traffic are avoided
-(ideas from BRouter's `gravel.brf`).
+(ideas from BRouter's `gravel.brf`). A sidewalk where bicycles are allowed
+(`sidewalk:right:bicycle=yes`, e.g. "Fussweg, Velo gestattet") counts like
+a minor road; OsmAnd does not see this tag.
 
 To ride a BRouter route in OsmAnd: export GPX with *OsmAnd* turn
 instructions, open it in OsmAnd → *Follow track* with **Attach to roads**

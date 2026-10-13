@@ -32,5 +32,18 @@ class GoodTrackSpeedTest(unittest.TestCase):
         self.assertIn('highway=track', lines[0])
 
 
+class SidewalkBicycleTest(unittest.TestCase):
+    """A road whose sidewalk allows bicycles is ridden on that sidewalk: minor-road
+    priority and no traffic penalty. BRouter only; OsmAnd drops the tag."""
+
+    def test_brouter_sidewalk_bicycle(self):
+        brf = (ROOT / 'profile/veloele.brf').read_text(encoding='utf-8')
+        self.assertRegex(brf, r'assign sidewalk_bike = or sidewalk:bicycle=yes\|designated\s+'
+                              r'or sidewalk:left:bicycle=yes\|designated\s+sidewalk:right:bicycle=yes\|designated')
+        self.assertIn('assign priority = if sidewalk_bike then max priority 0.75 else priority', brf)
+        facility = re.search(r'assign has_bike_facility = (.*?)\n\n', brf, re.S).group(1)
+        self.assertIn('sidewalk_bike', facility)
+
+
 if __name__ == '__main__':
     unittest.main()

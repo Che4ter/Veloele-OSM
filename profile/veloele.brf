@@ -242,13 +242,21 @@ assign priority =
        else if highway=path                     then 0.4
        else 0.7
 
+# a sidewalk where bicycles are allowed (e.g. Swiss "Fussweg, Velo gestattet",
+# mapped on the road as sidewalk:right:bicycle=yes): ride there instead of in
+# traffic, about as good as a minor road
+assign sidewalk_bike = or sidewalk:bicycle=yes|designated
+                       or sidewalk:left:bicycle=yes|designated
+                          sidewalk:right:bicycle=yes|designated
+assign priority = if sidewalk_bike then max priority 0.75 else priority
+
 # ---------------------------------------------------------------------------
 # extra factor for roads without cycle facility where maxspeed / traffic
 # estimates say it is fast or busy (mainly for regions with sparse cycleway
 # tagging; in NL most such roads are already handled above)
 
 assign has_bike_facility = or highway=cycleway|footway|path|pedestrian|track|steps
-                           or bicycle=designated or cyclestreet=yes or bicycle_road=yes
+                           or bicycle=designated or cyclestreet=yes or bicycle_road=yes or sidewalk_bike
                            or cycleway=track|lane|opposite_track|opposite_lane
                            or cycleway:both=track|lane
                               or cycleway:left=track|lane cycleway:right=track|lane
