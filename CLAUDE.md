@@ -10,6 +10,10 @@ only (not "or later"). User docs: `README.md`; build, test and release:
 
 - Keep it simple: hand-edited, checked-in files plus tests, no generators.
   `profile/veloele.xml` and `profile/osf/*.json` are edited directly.
+- Keep both engines in sync: every routing change goes into
+  `profile/veloele.xml` (OsmAnd) and `profile/veloele.brf` (BRouter), with
+  tests and route runs for both. Where one engine can't see a tag, say so in
+  a comment and in the test docstring.
 - Credit upstreams when touching derived files: OsmAnd-resources
   (`veloele.xml`, GPL-3.0), BRouter `gravel.brf` (`veloele.brf`, ideas
   only, MIT), CycloRoute by Louis, github.com/OsmAnd-Rendering/Cycling
