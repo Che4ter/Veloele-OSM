@@ -13,7 +13,13 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
+
+      # the bundle check validates POI filters against OsmAnd's POI types
+      - name: Fetch OsmAnd POI types
+        run: >
+          curl -sfL --create-dirs -o mapcreator/poi_types.xml
+          https://raw.githubusercontent.com/osmandapp/OsmAnd-resources/4452abfe9fae5f1c65e91a69f26ed7cafc331f90/poi/poi_types.xml
 
       - name: Test
         run: python3 -m unittest discover -s harness -p 'test_*.py'

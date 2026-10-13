@@ -10,14 +10,19 @@ import xml.etree.ElementTree as ET
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 JAR = ROOT / 'mapcreator/lib/OsmAnd-java-master-snapshot.jar'
+# CI has no mapcreator jar and downloads poi_types.xml from OsmAnd-resources instead
+POI_XML = ROOT / 'mapcreator/poi_types.xml'
 FORBIDDEN = re.compile(r'^(last_known_|selected_gpx|osm_user|user_name|enabled_plugins|backup_|live_monitoring_url|drawer_)')
 FILTER_ID = re.compile(r'^user_[a-z0-9_]+$')
 
 
-def load_poi_types(jar=JAR):
-    """poi type name -> set of category names, from OsmAnd's poi_types.xml inside the jar"""
-    with zipfile.ZipFile(jar) as z:
-        root = ET.fromstring(z.read('net/osmand/osm/poi_types.xml'))
+def load_poi_types(jar=JAR, xml=POI_XML):
+    """poi type name -> set of category names, from OsmAnd's poi_types.xml inside the jar (or next to it)"""
+    if pathlib.Path(jar).exists():
+        with zipfile.ZipFile(jar) as z:
+            root = ET.fromstring(z.read('net/osmand/osm/poi_types.xml'))
+    else:
+        root = ET.parse(xml).getroot()
     types = {}
     for cat in root.iter('poi_category'):
         for t in cat.iter('poi_type'):
