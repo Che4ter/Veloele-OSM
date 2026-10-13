@@ -87,7 +87,8 @@ The bundle sets these for the Velöle profile only:
 
 ## BRouter (brouter-web)
 
-Open *Customize profile*, paste `veloele.brf` (from the release or
+Open [brouter-web](https://brouter.m11n.de) (or any other instance), then
+*Customize profile*, paste `veloele.brf` (from the release or
 `profile/`) and press *Upload*
 (the upload is temporary; paste it again later). Options:
 
